@@ -603,9 +603,9 @@ class Dice
 			glBegin(GL_POLYGON);
 			int n = 720;
 			for (int i = 0; i < n; i++)
-				glVertex3f(R * cos(2 * PI / n * i), R * sin(2 * PI / n * i), 0.01f);//­pºâ§¤¼Ğ
+				glVertex3f(R * cos(2 * PI / n * i), R * sin(2 * PI / n * i), 0.01f);//è¨ˆç®—åæ¨™
 			glEnd();
-			glFlush();//±j¨î¨ê·s½w½Ä¡A«OÃÒ©R¥O³Q°õ¦æ
+			glFlush();//å¼·åˆ¶åˆ·æ–°ç·©è¡ï¼Œä¿è­‰å‘½ä»¤è¢«åŸ·è¡Œ
 		}
 		void dice_jump() {
 			glScalef(dice_scalaf, dice_scalaf, dice_scalaf);
@@ -706,7 +706,7 @@ class Player
 		float offset_x;
 		float offset_z;
 		int RoundStall = 0;
-		// ²Ä´X­Ó®æ¤l
+		// ç¬¬å¹¾å€‹æ ¼å­
 		Block *blockId;
 		SObject model;
 
@@ -786,28 +786,28 @@ SObject decors[] = {
 
 static string CARD_Discriptor[2][10][2] = {
 	{
-		{"Àİ¥Î¨­¤ÀÃÒÀ°¦P¾Ç¥I¨®²¼¿ú¡A¹H¤Ï­Ó¸êªk"				, "§¤¨c"},
-		{"¦¨¹Ï§@·~¦³À£ÁY¡AÀò±oÁ`²Îªí´­¡A¼úÀy1000¤¸"			, "1000"},
-		{"¸ôÃä¹H³W°±¨®¡A»@600¤¸"							, "-600"},
-		{"UNIX§@·~¦³À£ÁY¡AÀò±o±Ğ±Âªí´­¡A¼úÀy400¤¸"			, "400"},
-		{"§Ú¦³¤@°¦¤p¤òÆj¡A¦ı§Ú±q¨Ó³£¨S¦bÃM¡A¥ğ®§1¦^¦X"		, "0"},
-		{"¦¨¹Ï´Á¤¤¦Ò¦³À£ÁY¡AÀò±o¹ÏÆF¼ú¡A¼úÀy1500¤¸"			, "1500"},
-		{"¨S¥h¤W¦¨¹Ï¡AÂI¦W³Q§ì¨ì¡A»@800¤¸"					, "-800"},
-		{"¦¨¹Ï´Á¥½Project¨S°µ§¹¡A¨ü¨ì¥ş¥@¬É³è±ó¡A»@1000¤¸"	, "-1000"},
-		{"¦¨¹Ï¤W½Ò³£¦bºÎÄ±¡A·í¤£°_¦Ñ®vªº¤pÄ_¨©¡A»@500¤¸"	, "-500"},
-		{"¦ª¤£¦í¦¨¹Ï§@·~¡A¿ï¾Ü°h½Ò¡A»@400¤¸"				, "-400"},
+		{"æ¿«ç”¨èº«åˆ†è­‰å¹«åŒå­¸ä»˜è»Šç¥¨éŒ¢ï¼Œé•åå€‹è³‡æ³•"				, "åç‰¢"},
+		{"æˆåœ–ä½œæ¥­æœ‰å£“ç¸®ï¼Œç²å¾—ç¸½çµ±è¡¨æšï¼Œçå‹µ1000å…ƒ"			, "1000"},
+		{"è·¯é‚Šé•è¦åœè»Šï¼Œç½°600å…ƒ"							, "-600"},
+		{"UNIXä½œæ¥­æœ‰å£“ç¸®ï¼Œç²å¾—æ•™æˆè¡¨æšï¼Œçå‹µ400å…ƒ"			, "400"},
+		{"æˆ‘æœ‰ä¸€éš»å°æ¯›é©¢ï¼Œä½†æˆ‘å¾ä¾†éƒ½æ²’åœ¨é¨ï¼Œä¼‘æ¯1å›åˆ"		, "0"},
+		{"æˆåœ–æœŸä¸­è€ƒæœ‰å£“ç¸®ï¼Œç²å¾—åœ–éˆçï¼Œçå‹µ1500å…ƒ"			, "1500"},
+		{"æ²’å»ä¸Šæˆåœ–ï¼Œé»åè¢«æŠ“åˆ°ï¼Œç½°800å…ƒ"					, "-800"},
+		{"æˆåœ–æœŸæœ«Projectæ²’åšå®Œï¼Œå—åˆ°å…¨ä¸–ç•Œå”¾æ£„ï¼Œç½°1000å…ƒ"	, "-1000"},
+		{"æˆåœ–ä¸Šèª²éƒ½åœ¨ç¡è¦ºï¼Œç•¶ä¸èµ·è€å¸«çš„å°å¯¶è²ï¼Œç½°500å…ƒ"	, "-500"},
+		{"æ‰›ä¸ä½æˆåœ–ä½œæ¥­ï¼Œé¸æ“‡é€€èª²ï¼Œç½°400å…ƒ"				, "-400"},
 	},
 	{
-		{"¦¨¹Ï§@·~§Ë¤£¥X¨Ó¡A§ÛÅ§³Q§ì¨ì¡A¥h§¤¨c"				, "§¤¨c"},
-		{"¦¨¹Ï§@·~§Ë¤£¥X¨Ó¡A¨S¦³Ãº¥æ¡A»@600¤¸"				, "-600"},
-		{"¦¨¹Ï¼g§¹§Ñ°O¥æ¡A¶]¥h¦P¾Ç©Ğ¶¡«¢©Ô¡A»@800¤¸"		, "-800"},
-		{"UNIX³Q·íÁÙ¨Ó¤W¦¨¹Ï¡A¥ğ®§1¦^¦X"					, "0"},
-		{"¦¨¹Ï¤W½Ò³£¦bª±¤â¾÷¡A»@650¤¸"						, "-650"},
-		{"¦¨¹Ï¸òUNIX³£¦³À£ÁY¡AÀò±o¿Õ¨©º¸À£ÁY¼ú¡A¼úÀy2000¤¸"	, "2000"},
-		{"­×§¹¦¨¹Ï¡A¥\¼w¶êº¡¡AÀò±o¦p¨Ó¦ò«Êªk¸¹[°«¾Ô³Ó¹Ï]¡A¼úÀy2000¤¸"					, "-800"},
-		{"¹ïµo²¼¤¤¼ú¡A¼úÀy800¤¸"							, "800"},
-		{"­×¤F¦¨¹Ï¡A¾ú¸g¤E¤E¤K¤Q¤@Ãø¡AÀò±o¦p¨Ó¦ò«Êªk¸¹[¦¨¹Ï¦p¨Ó©v]¡A¼úÀy2000¤¸"	, "2000"},
-		{"­×¤F±o¹L¼úªº¶À¬K¿Ä±Ğ±Âªº½Ò¡A¦W³e¤d®a¡AÅAº¡¸U¤á¡A¼úÀy1500¤¸" , "1500"},
+		{"æˆåœ–ä½œæ¥­å¼„ä¸å‡ºä¾†ï¼ŒæŠ„è¥²è¢«æŠ“åˆ°ï¼Œå»åç‰¢"				, "åç‰¢"},
+		{"æˆåœ–ä½œæ¥­å¼„ä¸å‡ºä¾†ï¼Œæ²’æœ‰ç¹³äº¤ï¼Œç½°600å…ƒ"				, "-600"},
+		{"æˆåœ–å¯«å®Œå¿˜è¨˜äº¤ï¼Œè·‘å»åŒå­¸æˆ¿é–“å“ˆæ‹‰ï¼Œç½°800å…ƒ"		, "-800"},
+		{"UNIXè¢«ç•¶é‚„ä¾†ä¸Šæˆåœ–ï¼Œä¼‘æ¯1å›åˆ"					, "0"},
+		{"æˆåœ–ä¸Šèª²éƒ½åœ¨ç©æ‰‹æ©Ÿï¼Œç½°650å…ƒ"						, "-650"},
+		{"æˆåœ–è·ŸUNIXéƒ½æœ‰å£“ç¸®ï¼Œç²å¾—è«¾è²çˆ¾å£“ç¸®çï¼Œçå‹µ2000å…ƒ"	, "2000"},
+		{"ä¿®å®Œæˆåœ–ï¼ŒåŠŸå¾·åœ“æ»¿ï¼Œç²å¾—å¦‚ä¾†ä½›å°æ³•è™Ÿ[é¬¥æˆ°å‹åœ–]ï¼Œçå‹µ2000å…ƒ"					, "-800"},
+		{"å°ç™¼ç¥¨ä¸­çï¼Œçå‹µ800å…ƒ"							, "800"},
+		{"ä¿®äº†æˆåœ–ï¼Œæ­·ç¶“ä¹ä¹å…«åä¸€é›£ï¼Œç²å¾—å¦‚ä¾†ä½›å°æ³•è™Ÿ[æˆåœ–å¦‚ä¾†å®—]ï¼Œçå‹µ2000å…ƒ"	, "2000"},
+		{"ä¿®äº†å¾—é[æœªä¾†ç§‘æŠ€ç]çš„é»ƒæ˜¥èæ•™æˆçš„èª²ï¼Œåè²«åƒå®¶ï¼Œè­½æ»¿è¬æˆ¶ï¼Œçå‹µ1500å…ƒ" , "1500"},
 	}
 };
 
@@ -1122,7 +1122,7 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(WIDTH, HEIGHT);
 	glutInitWindowPosition(0, 0);
 	// Create the window with the title "Hello,GL"
-	glutCreateWindow("¦¨¹Ï¤j´I¯Î");
+	glutCreateWindow("æˆåœ–å¤§å¯Œç¿");
 
 	init();
 	glewInit();
@@ -1482,7 +1482,7 @@ void Block::render()
 			glVertex3f(-BLOCK_SIZE/2, 0.01, -BLOCK_SIZE/2);
 			glVertex3f(-BLOCK_SIZE/2, 0.01,  BLOCK_SIZE/2);
 		glEnd();
-		//¥~®Ø
+		//å¤–æ¡†
 		//setMaterialv(black_material);
 		glColor3fv(black_material);
 		glBegin(GL_POLYGON);
@@ -1516,14 +1516,14 @@ void Block::render()
 		{
 			if (bnum > 3)
 			{
-				// render ®ÈÀ]
+				// render æ—…é¤¨
 				glTranslatef(0.0, 1.6, 0.25 * BLOCK_SIZE);
 				glScalef(2.0, 2.0, 2.0);
 				buildings[0].Draw();
 			}
 			else
 			{
-				// render ´¶³q©Ğ¤l
+				// render æ™®é€šæˆ¿å­
 				glTranslatef(-(BLOCK_SIZE*0.35)*2, 0.8, 0.35*BLOCK_SIZE);
 				for (int i = 0; i < bnum; i++)
 				{
@@ -1543,7 +1543,7 @@ void Block::BlockEvent()
 	{
 		if (BlockType == "land")
 		{
-			if (owner == -1)//µL¥D¦a ¥i¶R
+			if (owner == -1)//ç„¡ä¸»åœ° å¯è²·
 			{
 
 				if (MouseControl == 1)
@@ -1556,7 +1556,7 @@ void Block::BlockEvent()
 					}
 				}
 			}
-			else if (owner != monopoly.now_player) //¥L¦a¡A¥I¹L¸ô¶O
+			else if (owner != monopoly.now_player) //ä»–åœ°ï¼Œä»˜éè·¯è²»
 			{
 				
 				long payment = setup * (bnum + 1) / 3;
@@ -1643,7 +1643,7 @@ void Block::Interface()
 	glPushMatrix();
 	
 	glColor3fv(color);
-	selectFont(24, DEFAULT_CHARSET, "µØ¤å¥é§º");
+	selectFont(24, DEFAULT_CHARSET, "è¯æ–‡ä»¿å®‹");
 	//glRasterPos3f(camPosx * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	
 	if (BlockType == "land")
@@ -1680,78 +1680,78 @@ void Block::LandInterface()
 	stringstream ss;
 	if (owner == -1)
 	{
-		//µL¥D¦a
+		//ç„¡ä¸»åœ°
 		ss << this->setup;
-		str = "³o¦a¤è¬İ°_¨Ó¤£¿ù¡A»ù®æ¬°";
+		str = "é€™åœ°æ–¹çœ‹èµ·ä¾†ä¸éŒ¯ï¼Œåƒ¹æ ¼ç‚º";
 		str.append(ss.str());
-		str.append("¡A­n¶R¶Ü ? ");
+		str.append("ï¼Œè¦è²·å— ? ");
 		glColor3f(1.0, 1.0, 1.0);
 
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
-		str = "¬O(¥ªÁä)            §_(¥kÁä)";
+		str = "æ˜¯(å·¦éµ)            å¦(å³éµ)";
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 	}
 	else if (owner != monopoly.now_player)
 	{
 		ss << owner + 1;
-		str = "¦¹¦aÄİ©óª±®a";
+		str = "æ­¤åœ°å±¬æ–¼ç©å®¶";
 		str.append(ss.str());
-		str.append("¡A");
+		str.append("ï¼Œ");
 		if (monopoly.players[owner].blockId->bid == 12 && monopoly.players[owner].RoundStall > 0)
 		{
-			str.append("¦]¸Óª±®a¥¿¦b§¤¨c¡A¬G¦¹¦¸¹L¸ô¶O§K¶O!");
+			str.append("å› è©²ç©å®¶æ­£åœ¨åç‰¢ï¼Œæ•…æ­¤æ¬¡éè·¯è²»å…è²»!");
 		}
 		else
 		{
 			int payment = setup * (bnum + 1) / 3;
 			if (bnum > 3)
-				str.append("¦³1´É®ÈÀ]");
+				str.append("æœ‰1æ£Ÿæ—…é¤¨");
 			else
 			{
 				ss.str("");
 				ss << bnum;
-				str.append("¦³");
+				str.append("æœ‰");
 				str.append(ss.str());
-				str.append("´É©Ğ¦a²£");
+				str.append("æ£Ÿæˆ¿åœ°ç”¢");
 			}
-			str.append("¡A»İ¥I");
+			str.append("ï¼Œéœ€ä»˜");
 			ss.str("");
 			ss << payment;
 			str.append(ss.str());
-			str.append("·í§@¹L¸ô¶O");
+			str.append("ç•¶ä½œéè·¯è²»");
 		}
 
 		glRasterPos3f(camPosx +0.2 - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
-		str = "½T»{(ÂIÀ»¥ô·N³B)";
+		str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 		glRasterPos3f(camPosx + 0.2 - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 	}
 	else if (bnum < 3)
 	{
 		int payment = setup / 4 * (bnum + 1) * 4 / 3;
-		str = "¥i¥H¥[»\©Ğ¤l¡A¶O¥Î¬°";
+		str = "å¯ä»¥åŠ è“‹æˆ¿å­ï¼Œè²»ç”¨ç‚º";
 		ss << payment;
 		str.append(ss.str());
-		str.append("­n«Ø³y¶Ü?");
+		str.append("è¦å»ºé€ å—?");
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
-		str = "¬O(¥ªÁä)            §_(¥kÁä)";
+		str = "æ˜¯(å·¦éµ)            å¦(å³éµ)";
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 	}
 	else if (bnum == 3)
 	{
 		int payment = setup / 4 * (bnum + 4) * 4 / 3;
-		str = "¥i¥H¤É¯Å¬°®ÈÀ]¡A¶O¥Î¬°";
+		str = "å¯ä»¥å‡ç´šç‚ºæ—…é¤¨ï¼Œè²»ç”¨ç‚º";
 		ss << payment;
 		str.append(ss.str());
-		str.append("­n«Ø³y¶Ü?");
+		str.append("è¦å»ºé€ å—?");
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
-		str = "¬O(¥ªÁä)            §_(¥kÁä)";
+		str = "æ˜¯(å·¦éµ)            å¦(å³éµ)";
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 	}
@@ -1760,16 +1760,16 @@ void Block::LandInterface()
 void Block::GameInterface()
 {
 	float ScreenRate = ScreenWidth / ScreenHeight;
-	string str = "¤p¹CÀ¸: ";
+	string str = "å°éŠæˆ²: ";
 
 	if (setup == GAME_TYPE_POKER)
-		str.append("¼³§JµP²q¤j¤p");
+		str.append("æ’²å…‹ç‰ŒçŒœå¤§å°");
 	else if (setup == GAME_TYPE_SHOOTDART)
-		str.append("®g­¸Ãğ");
+		str.append("å°„é£›é¢");
 
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
 }
@@ -1779,17 +1779,17 @@ void Block::CornerInterface()
 	string str;
 
 	if (setup == CORNER_FREEPARK)
-		str = "¸ô¹L§K¶O°±¨®³õ¡A¥ğ®§1¦^¦X";
+		str = "è·¯éå…è²»åœè»Šå ´ï¼Œä¼‘æ¯1å›åˆ";
 	else if (setup == CORNER_GOPRISON)
-		str = "¥æ¤F¦¨¹Ï§@·~¦ı¨S¦³À£ÁY¡A¥h§¤¨c";
+		str = "äº¤äº†æˆåœ–ä½œæ¥­ä½†æ²’æœ‰å£“ç¸®ï¼Œå»åç‰¢";
 	else if (setup == CORNER_PRISON)
-		str = "¸ô¹LºÊº»¡AµL¨Æµo¥Í";
+		str = "è·¯éç›£ç„ï¼Œç„¡äº‹ç™¼ç”Ÿ";
 	else if (setup == CORNER_START)
-		str = "¦^¨ì°_ÂI¡A¼úÀy2000¤¸";
+		str = "å›åˆ°èµ·é»ï¼Œçå‹µ2000å…ƒ";
 
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
 }
@@ -1810,7 +1810,7 @@ void Block::CardInterface()
 
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
 }
@@ -2011,11 +2011,11 @@ void MonopolyGame::HUD(int PlayerID)
 	//glLoadIdentity();
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-	selectFont(24, DEFAULT_CHARSET, "µØ¤å¥é§º");
+	selectFont(24, DEFAULT_CHARSET, "è¯æ–‡ä»¿å®‹");
 	for (int i = 0; i < PlayerNum; i++)
 	{
 		stringstream ss;
-		string str = "ª±®a";
+		string str = "ç©å®¶";
 		ss << i + 1;
 		str.append(ss.str());
 		str.append(":");
@@ -2024,7 +2024,7 @@ void MonopolyGame::HUD(int PlayerID)
 		drawCNString(str.c_str());
 
 		ss.str("");
-		str = "°]²£:";
+		str = "è²¡ç”¢:";
 		// player money
 		ss << players[i].money;
 		str.append(ss.str());
@@ -2032,7 +2032,7 @@ void MonopolyGame::HUD(int PlayerID)
 		drawCNString(str.c_str());
 		
 		ss.str("");
-		str = "¤g¦a¼Æ:";
+		str = "åœŸåœ°æ•¸:";
 		int estimates = 0;
 		int meta_estimates = 0;
 		int lands = 0;
@@ -2052,14 +2052,14 @@ void MonopolyGame::HUD(int PlayerID)
 		drawCNString(str.c_str());
 
 		ss.str("");
-		str = "©Ğ¦a²£¼Æ:";
+		str = "æˆ¿åœ°ç”¢æ•¸:";
 		ss << estimates;
 		str.append(ss.str());
 		glRasterPos3f(camPosx - 0.5 * ScreenRate, camPosy + (0.2 - 0.2 * i - 0.09) * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 
 		ss.str("");
-		str = "®ÈÀ]¼Æ:";
+		str = "æ—…é¤¨æ•¸:";
 		ss << meta_estimates;
 		str.append(ss.str());
 		glRasterPos3f(camPosx - 0.5 * ScreenRate, camPosy + (0.2 - 0.2 * i - 0.12) * ScreenRate, camPosz - 0.5);
@@ -2068,7 +2068,7 @@ void MonopolyGame::HUD(int PlayerID)
 		if (monopoly.players[i].RoundStall > 0)
 		{
 			ss.str("");
-			str = "¥ğ®§¦^¦X³Ñ¾l:";
+			str = "ä¼‘æ¯å›åˆå‰©é¤˜:";
 			ss << monopoly.players[i].RoundStall;
 			str.append(ss.str());
 			glRasterPos3f(camPosx - 0.5 * ScreenRate, camPosy + (0.2 - 0.2 * i - 0.15) * ScreenRate, camPosz - 0.5);
@@ -2139,12 +2139,12 @@ void MonopolyGame::GameOver()
 	// Wid 0.118, Hei 0.06
 	float ScreenRate = ScreenWidth / ScreenHeight;
 
-	selectFont(32, DEFAULT_CHARSET, "µØ¤å¥é§º");
+	selectFont(32, DEFAULT_CHARSET, "è¯æ–‡ä»¿å®‹");
 	glColor4f(1.0, 1.0, 1.0, 0.5);
-	string str = "¹CÀ¸µ²§ô";
+	string str = "éŠæˆ²çµæŸ";
 	glRasterPos3f(camPosx + 0.08 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx + 0.08 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
 
@@ -2203,7 +2203,7 @@ void GameShootDart::GameMouseContorl(int button, int state, int x, int y)
 void GameShootDart::OutcomeInterface()
 {
 	float ScreenRate = ScreenWidth / ScreenHeight;
-	string str = "®g­¸Ãğµ²ªG: ±o¤À";
+	string str = "å°„é£›é¢çµæœ: å¾—åˆ†";
 	stringstream ss;
 	
 	ss << GamePoint;
@@ -2211,14 +2211,14 @@ void GameShootDart::OutcomeInterface()
 
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "¼úÀy: ";
+	str = "çå‹µ: ";
 	ss.str("");
 	ss << GamePoint * 100;
 	str.append(ss.str());
-	str.append("¤¸");
+	str.append("å…ƒ");
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy - 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
 }
