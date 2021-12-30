@@ -784,6 +784,33 @@ SObject decors[] = {
 	SObject("objects/SM_Fern_02.obj", 6.0, 2.5, -2.0, 5.0, 107.0 / 255.0, 142.0 / 255.0,35.0 / 255.0),
 };
 
+static string CARD_Discriptor[2][10][2] = {
+	{
+		{"濫用身分證幫同學付車票錢，違反個資法"				, "坐牢"},
+		{"成圖作業有壓縮，獲得總統表揚，獎勵1000元"			, "1000"},
+		{"路邊違規停車，罰600元"							, "-600"},
+		{"UNIX作業有壓縮，獲得教授表揚，獎勵400元"			, "400"},
+		{"我有一隻小毛驢，但我從來都沒在騎，休息1回合"		, "0"},
+		{"成圖期中考有壓縮，獲得圖靈獎，獎勵1500元"			, "1500"},
+		{"沒去上成圖，點名被抓到，罰800元"					, "-800"},
+		{"成圖期末Project沒做完，受到全世界唾棄，罰1000元"	, "-1000"},
+		{"成圖上課都在睡覺，當不起老師的小寶貝，罰500元"	, "-500"},
+		{"扛不住成圖作業，選擇退課，罰400元"				, "-400"},
+	},
+	{
+		{"成圖作業弄不出來，抄襲被抓到，去坐牢"				, "坐牢"},
+		{"成圖作業弄不出來，沒有繳交，罰600元"				, "-600"},
+		{"成圖寫完忘記交，跑去同學房間哈拉，罰800元"		, "-800"},
+		{"UNIX被當還來上成圖，休息1回合"					, "0"},
+		{"成圖上課都在玩手機，罰650元"						, "-650"},
+		{"成圖跟UNIX都有壓縮，獲得諾貝爾壓縮獎，獎勵2000元"	, "2000"},
+		{"修完成圖，功德圓滿，獲得如來佛封法號[鬥戰勝圖]，獎勵2000元"					, "-800"},
+		{"對發票中獎，獎勵800元"							, "800"},
+		{"修了成圖，歷經九九八十一難，獲得如來佛封法號[成圖如來宗]，獎勵2000元"	, "2000"},
+		{"修了得過獎的黃春融教授的課，名貫千家，譽滿萬戶，獎勵1500元" , "1500"},
+	}
+};
+
 MonopolyGame monopoly = MonopolyGame();
 
 void init(void)
@@ -1595,6 +1622,10 @@ void Block::BlockEvent()
 		{
 			
 		}
+		else if (BlockType == "card")
+		{
+
+		}
 		MouseControl == -1;
 		if(BlockType!="game")
 			monopoly.toREADY_STATE();
@@ -1764,7 +1795,24 @@ void Block::CornerInterface()
 }
 void Block::CardInterface()
 {
+	float ScreenRate = ScreenWidth / ScreenHeight;
+	string str;
 
+	rand();
+	if (setup == CARD_0)
+	{
+
+	}
+	else if (setup == CARD_1)
+	{
+
+	}
+
+	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
+	drawCNString(str.c_str());
+	str = "確認(點擊任意處)";
+	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
+	drawCNString(str.c_str());
 }
 void Block::UserEventMouseControl(int button, int state, int x, int y)
 {
