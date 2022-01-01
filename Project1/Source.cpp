@@ -17,6 +17,7 @@
 #define HEIGHT 720
 #define MAX_CHAR 128
 
+#define GAME_STATE_POKER -2
 #define GAME_STATE_SHOOTDART -1
 #define READY_STATE 0
 #define ROLLING_STATE 1
@@ -34,6 +35,24 @@
 #define SHOWRESULT 3
 #define XMOVEMODE 4
 #define OUTPUTOUTCOME 5
+
+#define GUESS_BEFORE 0
+#define GUESS_AFTER 1
+
+#define FINAL_NOTYET 0
+#define FINAL_GET 1
+#define FINAL_SHOW 2
+
+#define GUESS_BIG 1
+#define GUESS_SMALL 2
+#define GUESS_SAME 3
+
+#define Gamble_S 1
+#define Gamble_M 2
+#define Gamble_L 3
+#define WIN 0
+#define LOSE 1
+#define WIN_SAME 2
 
 #define SHOOT_GENERALMODE 0
 #define SHOOT_CHEATMODE 1
@@ -88,6 +107,777 @@ static GLfloat low_shininess[] = { 1.0 };
 static GLfloat mat_dice[] = { 0.5, 0.5 ,0.5 };
 static GLfloat mat_diffuse_dice[] = { 0.5, 0.5 ,0.50 };
 
+class GamePoker
+{
+	public:
+		//poker
+		GLuint card_list;
+		GLuint poker_list;
+		int rand_start = 1;
+		long long real_money = 1000;
+		long long player_money = 100;
+
+		int final_state = FINAL_NOTYET;
+		int final_start = 1;
+		int guess_mode = GUESS_BEFORE;
+		int guess = 0;
+		int gamble = 0;
+		//poker_point
+		int player_point = 0;
+		int CP_point = 0;
+		//result
+		int result = 0;
+		//poker_animation
+		float playercard_rotate = 180.0;
+		float CPcard_rotate = 180.0;
+		int warningMessage = 0;
+
+		void draw_circle(float R) {
+			glBegin(GL_POLYGON);
+			int n = 720;
+			for (int i = 0; i < n; i++)
+				glVertex3f(R * cos(2 * PI / n * i), R * sin(2 * PI / n * i), 0.01f);
+			glEnd();
+			glFlush();
+		}
+		void flower_1() {
+			glPushMatrix();
+			glScalef(0.5, 0.5, 0.5);
+			glColor3f(0.0, 0.0, 0.0);
+			glPushMatrix();
+			glTranslatef(0.4, 0.0, 0.0);
+			draw_circle(0.5);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 0.5, 0.01);
+			draw_circle(0.5);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-0.4, 0.0, 0.02);
+			draw_circle(0.5);
+			glPopMatrix();
+			glPushMatrix();
+			glBegin(GL_TRIANGLES);
+			glVertex3f(0.0, -0.2, 0.03);
+			glVertex3f(0.2, -0.8, 0.03);
+			glVertex3f(-0.2, -0.8, 0.03);
+			glEnd();
+			glPopMatrix();
+			glPopMatrix();
+		}
+		void flower_2() {
+			glPushMatrix();
+			glScalef(0.6, 0.6, 0.6);
+			glColor3f(1.0, 0.0, 0.0);
+			glBegin(GL_POLYGON);
+			glVertex3f(0.4, 0.0, 0.0);
+			glVertex3f(0.0, 0.8, 0.0);
+			glVertex3f(-0.4, 0.0, 0.0);
+			glVertex3f(0.0, -0.8, 0.0);
+			glEnd();
+			glPopMatrix();
+		}
+		void flower_3() {
+			glPushMatrix();
+			glScalef(0.5, 0.5, 0.5);
+			glColor3f(1.0, 0.0, 0.0);
+			glPushMatrix();
+			glTranslatef(0.4, 0.0, 0.0);
+			draw_circle(0.5);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-0.4, 0.0, 0.0);
+			draw_circle(0.5);
+			glPopMatrix();
+			glPushMatrix();
+			glBegin(GL_POLYGON);
+			glVertex3f(0.9, 0.0, 0.0);
+			glVertex3f(0.7, -0.42, 0.0);
+			glVertex3f(0.0, -1.0, 0.0);
+			glVertex3f(-0.7, -0.42, 0.0);
+			glVertex3f(-0.9, 0.0, 0.0);
+			glEnd();
+			glPopMatrix();
+			glPopMatrix();
+		}
+		void flower_4() {
+			glPushMatrix();
+			glScalef(0.5, 0.5, 0.5);
+			glColor3f(0.0, 0.0, 0.0);
+			glPushMatrix();
+			glRotatef(180.0, 0.0, 0.0, 1.0);
+			glPushMatrix();
+			glTranslatef(0.4, 0.0, 0.0);
+			draw_circle(0.5);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-0.4, 0.0, 0.0);
+			draw_circle(0.5);
+			glPopMatrix();
+			glPushMatrix();
+			glBegin(GL_POLYGON);
+			glVertex3f(0.9, 0.0, 0.0);
+			glVertex3f(0.7, -0.42, 0.0);
+			glVertex3f(0.0, -1.0, 0.0);
+			glVertex3f(-0.7, -0.42, 0.0);
+			glVertex3f(-0.9, 0.0, 0.0);
+			glEnd();
+			glPopMatrix();
+			glPushMatrix();
+			glBegin(GL_POLYGON);
+			glVertex3f(0.0, 0.2, 0.0);
+			glVertex3f(0.2, 0.6, 0.0);
+			glVertex3f(-0.2, 0.6, 0.0);
+			glEnd();
+			glPopMatrix();
+			glPopMatrix();
+			glPopMatrix();
+		}
+		void draw_flo(int flo) {
+			switch (flo) {
+			case 0:
+				flower_1();
+				break;
+			case 1:
+				flower_2();
+				break;
+			case 2:
+				flower_3();
+				break;
+			case 3:
+				flower_4();
+				break;
+			default:
+				break;
+			}
+
+		}
+		void draw_1(int flo) {
+			glPushMatrix();
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_2(int flo) {
+			glPushMatrix();
+			glTranslatef(0.0, 1.8, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, -1.8, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_3(int flo) {
+			glPushMatrix();
+			glTranslatef(0.0, 1.8, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 0.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, -1.8, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_4(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.0, 1.8, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.0, 1.8, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.0, -1.8, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.0, -1.8, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_5(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.0, 1.8, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.0, 1.8, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 0.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.0, -1.8, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.0, -1.8, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_6(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.0, 1.8, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.0, 1.8, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.0, 0.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.0, 0.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.0, -1.8, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.0, -1.8, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_7(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, 0.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 0.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 0.5, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_8(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_9(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 1.2, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_10(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 1.2, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, -1.2, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_11(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 1.2, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 0.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, -1.2, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_12(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void draw_13(int flo) {
+			glPushMatrix();
+			glTranslatef(-1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 2.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, 0.7, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 2.2, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 1.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, 0.0, 0.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -0.7, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, -1.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(0.0, -2.2, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(-1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+			glPushMatrix();
+			glTranslatef(1.2, -2.0, 0.0);
+			glRotatef(180.f, 0.0, 0.0, 1.0);
+			draw_flo(flo);
+			glPopMatrix();
+		}
+		void set_card() {
+			glColor3f(1.0, 1.0, 1.0);
+			glBegin(GL_POLYGON);
+			glVertex3f(2.0, 3.0, -0.01);
+			glVertex3f(-2.0, 3.0, -0.01);
+			glVertex3f(-2.0, -3.0, -0.01);
+			glVertex3f(2.0, -3.0, -0.01);
+			glEnd();
+			glColor3f(1.0, 0.0, 0.0);
+			glBegin(GL_POLYGON);
+			glVertex3f(2.0, 3.0, -0.02);
+			glVertex3f(-2.0, 3.0, -0.02);
+			glVertex3f(-2.0, -3.0, -0.02);
+			glVertex3f(2.0, -3.0, -0.02);
+			glEnd();
+		}
+		void set_flower(int num) {
+			glPushMatrix();
+			switch (num / 4) {
+			case 0:
+				draw_1(num % 4);
+				break;
+			case 1:
+				draw_2(num % 4);
+				break;
+			case 2:
+				draw_3(num % 4);
+				break;
+			case 3:
+				draw_4(num % 4);
+				break;
+			case 4:
+				draw_5(num % 4);
+				break;
+			case 5:
+				draw_6(num % 4);
+				break;
+			case 6:
+				draw_7(num % 4);
+				break;
+			case 7:
+				draw_8(num % 4);
+				break;
+			case 8:
+				draw_9(num % 4);
+				break;
+			case 9:
+				draw_10(num % 4);
+				break;
+			case 10:
+				draw_11(num % 4);
+				break;
+			case 11:
+				draw_12(num % 4);
+				break;
+			case 12:
+				draw_13(num % 4);
+				break;
+			default:
+				break;
+			}
+
+			glPopMatrix();
+
+		}
+		void set_rand() {
+			player_point = (rand() % 52);
+			do {
+				CP_point = (rand() % 52);
+			} while (CP_point == player_point);
+			printf("player:%d CP: %d\n", player_point, CP_point);
+		}
+		void getmoney() {
+			float tmp = player_money;
+			if (result != LOSE) {
+				printf("win\n");
+				player_money *= 2;
+				if (guess_mode == GUESS_BEFORE) {
+					player_money *= 2;
+				}
+				if (result == WIN_SAME) {
+					player_money *= 2;
+				}
+				player_money -= tmp;
+			}
+			else {
+				if (gamble != Gamble_S) {
+					player_money = -1 * tmp;
+				}
+				else {
+					player_money = 0;
+				}
+			}
+			//printf("player money:%d \n", player_money);
+			real_money += player_money;
+			//printf("result money:%d \n", real_money);
+		}
+		void getresult() {
+			switch (guess) {
+			case GUESS_BIG:
+				if ((player_point / 4) > (CP_point / 4)) {
+					result = WIN;
+				}
+				else {
+					result = LOSE;
+				}
+				break;
+			case GUESS_SAME:
+				if ((player_point / 4) == (CP_point / 4)) {
+					result = WIN_SAME;
+				}
+				else {
+					result = LOSE;
+				}
+				break;
+			case GUESS_SMALL:
+				if ((player_point / 4) < (CP_point / 4)) {
+					result = WIN;
+				}
+				else {
+					result = LOSE;
+				}
+				break;
+			}
+			getmoney();
+		}
+		void reset_pokergame() {
+			player_money = 100;
+			player_point = 0;
+			CP_point = 0;
+			result = 0;
+			guess_mode = GUESS_BEFORE;
+			guess = GUESS_SMALL;
+			gamble = Gamble_S;
+			final_state = FINAL_NOTYET;
+			final_start = 1;
+			playercard_rotate = 180.0;
+			CPcard_rotate = 180.0;
+			rand_start = 1;
+			warningMessage = 0;
+		}
+		void render()
+		{
+			glEnable(GL_DEPTH_TEST);
+			glLoadIdentity();
+			gluLookAt(camPosx, camPosy, camPosz, camPosx, camPosy, camPosz - 100.0, 0.0, 1.0, 0.0);
+			if (rand_start == 1) {
+				set_rand();
+				rand_start = 0;
+				//printf("Now is doen't show mode, now guessing then enter get double point, or using space to show what point you have now...\n");
+			}
+			glPushMatrix();
+				glTranslatef(camPosx, camPosy, camPosz - 10.0);
+				glPushMatrix();
+					glRotatef(playercard_rotate, 0.0, 1.0, 0.0);
+					set_card();
+					set_flower(player_point);
+				glPopMatrix();
+				glPushMatrix();
+					glTranslatef(10.0, 10.0, -10.0);
+					glRotatef(CPcard_rotate, 0.0, 1.0, 0.0);
+					set_card();
+					set_flower(CP_point);
+				glPopMatrix();
+			glPopMatrix();
+			GameInterface();
+			glDisable(GL_DEPTH_TEST);
+		}
+		void GameKeyboardControl(unsigned char key, int x, int y);
+		void GameInterface();
+		void idle() {
+			if (guess_mode == GUESS_AFTER) {
+				if (playercard_rotate > 0.0) {
+					playercard_rotate -= 10.0;
+					glutPostRedisplay();
+				}
+			}
+			if (final_state == FINAL_GET) {
+				if (playercard_rotate > 0.0) {
+					playercard_rotate -= 10.0;
+					glutPostRedisplay();
+				}
+				else if (CPcard_rotate > 0.0) {
+					CPcard_rotate -= 10.0;
+					glutPostRedisplay();
+				}
+				else {
+					if (final_start == 1) {
+						getresult();
+						final_start = 0;
+						final_state = FINAL_SHOW;
+					}
+				}
+			}
+			//glutPostRedisplay();
+		}
+};
 class GameShootDart
 {
 public:
@@ -603,9 +1393,9 @@ public:
 		glBegin(GL_POLYGON);
 		int n = 720;
 		for (int i = 0; i < n; i++)
-			glVertex3f(R * cos(2 * PI / n * i), R * sin(2 * PI / n * i), 0.01f);//­pºâ§¤¼Ğ
+			glVertex3f(R * cos(2 * PI / n * i), R * sin(2 * PI / n * i), 0.01f);//è¨ˆç®—åæ¨™
 		glEnd();
-		glFlush();//±j¨î¨ê·s½w½Ä¡A«OÃÒ©R¥O³Q°õ¦æ
+		glFlush();//å¼·åˆ¶åˆ·æ–°ç·©è¡ï¼Œä¿è­‰å‘½ä»¤è¢«åŸ·è¡Œ
 	}
 	void dice_jump() {
 		glScalef(dice_scalaf, dice_scalaf, dice_scalaf);
@@ -706,7 +1496,7 @@ public:
 	float offset_x;
 	float offset_z;
 	int RoundStall = 0;
-	// ²Ä´X­Ó®æ¤l
+	// ç¬¬å¹¾å€‹æ ¼å­
 	Block* blockId;
 	SObject model;
 
@@ -731,6 +1521,7 @@ public:
 
 	int state;
 
+	int pass_start;
 	bool HUD_Display_FLAG = TRUE;
 	int now_player;
 	Player* players;
@@ -754,6 +1545,7 @@ public:
 	void detectPlayer();
 	void GameOver();
 	void toGAME_STATE();
+	void PassStartMessage();
 };
 
 
@@ -770,6 +1562,7 @@ void drawString(const char* str);
 
 Dice dice = Dice();
 GameShootDart shootDart = GameShootDart();
+GamePoker poker = GamePoker();
 SObject test = SObject("objects/Player1.obj", 0.0, 0.0, 0.0, 4.0, 0.8, 0.2, 0.2);
 SObject buildings[] = {
 	SObject("objects/building01.obj", 0.0, 0.0, 0.0, 1.0, player_material[0]),
@@ -786,28 +1579,28 @@ SObject decors[] = {
 
 static string CARD_Discriptor[2][10][2] = {
 	{
-		{"Àİ¥Î¨­¤ÀÃÒÀ°¦P¾Ç¥I¨®²¼¿ú¡A¹H¤Ï­Ó¸êªk¡A¥h§¤¨c"		, "§¤¨c"},
-		{"¦¨¹Ï§@·~¦³À£ÁY¡AÀò±oÁ`²Îªí´­¡A¼úÀy1000¤¸"			, "1000"},
-		{"¸ôÃä¹H³W°±¨®¡A»@600¤¸"							, "-600"},
-		{"UNIX§@·~¦³À£ÁY¡AÀò±o±Ğ±Âªí´­¡A¼úÀy400¤¸"			, "400"},
-		{"§Ú¦³¤@°¦¤p¤òÆj¡A¦ı§Ú±q¨Ó³£¨S¦bÃM¡A¥ğ®§1¦^¦X"		, "0"},
-		{"¦¨¹Ï´Á¤¤¦Ò¦³À£ÁY¡AÀò±o[¹ÏÆF¼ú]¡A¼úÀy1500¤¸"		, "1500"},
-		{"¨S¥h¤W¦¨¹Ï¡AÂI¦W³Q§ì¨ì¡A»@800¤¸"					, "-800"},
-		{"¦¨¹Ï´Á¥½Project¨S°µ§¹¡A¨ü¨ì¥ş¥@¬É³è±ó¡A»@1000¤¸"	, "-1000"},
-		{"¦¨¹Ï¤W½Ò³£¦bºÎÄ±¡A·í¤£°_¦Ñ®vªº¤pÄ_¨©¡A»@500¤¸"	, "-500"},
-		{"¦ª¤£¦í¦¨¹Ï§@·~¡A¿ï¾Ü°h½Ò¡A»@400¤¸"				, "-400"},
+		{"æ¿«ç”¨èº«åˆ†è­‰å¹«åŒå­¸ä»˜è»Šç¥¨éŒ¢ï¼Œé•åå€‹è³‡æ³•ï¼Œå»åç‰¢"		, "åç‰¢"},
+		{"æˆåœ–ä½œæ¥­æœ‰å£“ç¸®ï¼Œç²å¾—ç¸½çµ±è¡¨æšï¼Œçå‹µ1000å…ƒ"			, "1000"},
+		{"è·¯é‚Šé•è¦åœè»Šï¼Œç½°600å…ƒ"							, "-600"},
+		{"UNIXä½œæ¥­æœ‰å£“ç¸®ï¼Œç²å¾—æ•™æˆè¡¨æšï¼Œçå‹µ400å…ƒ"			, "400"},
+		{"æˆ‘æœ‰ä¸€éš»å°æ¯›é©¢ï¼Œä½†æˆ‘å¾ä¾†éƒ½æ²’åœ¨é¨ï¼Œä¼‘æ¯1å›åˆ"		, "0"},
+		{"æˆåœ–æœŸä¸­è€ƒæœ‰å£“ç¸®ï¼Œç²å¾—[åœ–éˆç]ï¼Œçå‹µ1500å…ƒ"		, "1500"},
+		{"æ²’å»ä¸Šæˆåœ–ï¼Œé»åè¢«æŠ“åˆ°ï¼Œç½°800å…ƒ"					, "-800"},
+		{"æˆåœ–æœŸæœ«Projectæ²’åšå®Œï¼Œå—åˆ°å…¨ä¸–ç•Œå”¾æ£„ï¼Œç½°1000å…ƒ"	, "-1000"},
+		{"æˆåœ–ä¸Šèª²éƒ½åœ¨ç¡è¦ºï¼Œç•¶ä¸èµ·è€å¸«çš„å°å¯¶è²ï¼Œç½°500å…ƒ"	, "-500"},
+		{"æ‰›ä¸ä½æˆåœ–ä½œæ¥­ï¼Œé¸æ“‡é€€èª²ï¼Œç½°400å…ƒ"				, "-400"},
 	},
 	{
-		{"¦¨¹Ï§@·~§Ë¤£¥X¨Ó¡A§ÛÅ§³Q§ì¨ì¡A¥h§¤¨c"												, "§¤¨c"},
-		{"¦¨¹Ï§@·~§Ë¤£¥X¨Ó¡A¨S¦³Ãº¥æ¡A»@600¤¸"												, "-600"},
-		{"¦¨¹Ï¼g§¹§Ñ°O¥æ¡A¶]¥h¦P¾Ç©Ğ¶¡«¢©Ô¡A»@800¤¸"										, "-800"},
-		{"UNIX³Q·íÁÙ¨Ó¤W¦¨¹Ï¡A¥ğ®§1¦^¦X"													, "0"},
-		{"¦¨¹Ï¤W½Ò³£¦bª±¤â¾÷¡A»@650¤¸"														, "-650"},
-		{"¦¨¹Ï§@·~¸òUNIX§@·~³£¦³À£ÁY¡AÀò±o[¿Õ¨©º¸À£ÁY¼ú]¡A¼úÀy2500¤¸"						, "2500"},
-		{"­×§¹¦¨¹Ï¡A¥\¼w¶êº¡¡AÀò±o¦p¨Ó¦ò«Êªk¸¹[¦¨¹Ï³Ó¦ò]¡A¼úÀy2000¤¸"						, "2000"},
-		{"¹ïµo²¼¤¤¼ú¡A¼úÀy800¤¸"															,  "800"},
-		{"­×¤F¦¨¹Ï¡A¾ú¸g¤E¤E¤K¤Q¤@Ãø«á­×¦¨¥¿ªG¡AÀò±o¦p¨Ó¦ò«Êªk¸¹[¦¨¹Ï¦p¨Ó©v]¡A¼úÀy2000¤¸"	, "2000"},
-		{"­×¤F±o¹L[¥¼¨Ó¬ì§Ş¼ú]ªº¶À¬K¿Ä±Ğ±Âªº½Ò¡A¦W³e¤d®a¡AÅAº¡¸U¤á¡A¼úÀy1500¤¸"				, "1500"},
+		{"æˆåœ–ä½œæ¥­å¼„ä¸å‡ºä¾†ï¼ŒæŠ„è¥²è¢«æŠ“åˆ°ï¼Œå»åç‰¢"												, "åç‰¢"},
+		{"æˆåœ–ä½œæ¥­å¼„ä¸å‡ºä¾†ï¼Œæ²’æœ‰ç¹³äº¤ï¼Œç½°600å…ƒ"												, "-600"},
+		{"æˆåœ–å¯«å®Œå¿˜è¨˜äº¤ï¼Œè·‘å»åŒå­¸æˆ¿é–“å“ˆæ‹‰ï¼Œç½°800å…ƒ"										, "-800"},
+		{"UNIXè¢«ç•¶é‚„ä¾†ä¸Šæˆåœ–ï¼Œä¼‘æ¯1å›åˆ"													, "0"},
+		{"æˆåœ–ä¸Šèª²éƒ½åœ¨ç©æ‰‹æ©Ÿï¼Œç½°650å…ƒ"														, "-650"},
+		{"æˆåœ–ä½œæ¥­è·ŸUNIXä½œæ¥­éƒ½æœ‰å£“ç¸®ï¼Œç²å¾—[è«¾è²çˆ¾å£“ç¸®ç]ï¼Œçå‹µ2500å…ƒ"						, "2500"},
+		{"ä¿®å®Œæˆåœ–ï¼ŒåŠŸå¾·åœ“æ»¿ï¼Œç²å¾—å¦‚ä¾†ä½›å°æ³•è™Ÿ[æˆåœ–å‹ä½›]ï¼Œçå‹µ2000å…ƒ"						, "2000"},
+		{"å°ç™¼ç¥¨ä¸­çï¼Œçå‹µ800å…ƒ"															,  "800"},
+		{"ä¿®äº†æˆåœ–ï¼Œæ­·ç¶“ä¹ä¹å…«åä¸€é›£å¾Œä¿®æˆæ­£æœï¼Œç²å¾—å¦‚ä¾†ä½›å°æ³•è™Ÿ[æˆåœ–å¦‚ä¾†å®—]ï¼Œçå‹µ2000å…ƒ"	, "2000"},
+		{"ä¿®äº†å¾—é[æœªä¾†ç§‘æŠ€ç]çš„é»ƒæ˜¥èæ•™æˆçš„èª²ï¼Œåè²«åƒå®¶ï¼Œè­½æ»¿è¬æˆ¶ï¼Œçå‹µ1500å…ƒ"				, "1500"},
 	}
 };
 
@@ -1009,6 +1802,10 @@ void keyboard(unsigned char key, int x, int y)
 	{
 		shootDart.GameKeyboardControl(key, x, y);
 	}
+	else if (monopoly.state == GAME_STATE_POKER)
+	{
+		poker.GameKeyboardControl(key, x ,y);
+	}
 	else if (monopoly.state == EVENT_STATE)
 	{
 		switch (key)
@@ -1066,6 +1863,7 @@ void keyboard(unsigned char key, int x, int y)
 }
 void display()
 {
+	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glLoadIdentity();
@@ -1084,6 +1882,8 @@ void display()
 
 	if (monopoly.state == GAME_STATE_SHOOTDART)
 		shootDart.render();
+	else if (monopoly.state == GAME_STATE_POKER)
+		poker.render();
 	else
 	{
 		dice.listRender();
@@ -1120,12 +1920,13 @@ void idle()
 	monopoly.detectPlayer();
 	if (monopoly.state == GAME_STATE_SHOOTDART)
 		shootDart.idle();
+	else if (monopoly.state == GAME_STATE_POKER)
+		poker.idle();
 	glutPostRedisplay();
 }
 
 int main(int argc, char* argv[])
 {
-
 	// 	set seed
 	srand(time(NULL));
 	// Initialize GLUT
@@ -1136,7 +1937,7 @@ int main(int argc, char* argv[])
 	glutInitWindowSize(WIDTH, HEIGHT);
 	glutInitWindowPosition(0, 0);
 	// Create the window with the title "Hello,GL"
-	glutCreateWindow("¦¨¹Ï¤j´I¯Î");
+	glutCreateWindow("æˆåœ–å¤§å¯Œç¿");
 
 	init();
 	glewInit();
@@ -1496,7 +2297,7 @@ void Block::render()
 	glVertex3f(-BLOCK_SIZE / 2, 0.01, -BLOCK_SIZE / 2);
 	glVertex3f(-BLOCK_SIZE / 2, 0.01, BLOCK_SIZE / 2);
 	glEnd();
-	//¥~®Ø
+	//å¤–æ¡†
 	//setMaterialv(black_material);
 	glColor3fv(black_material);
 	glBegin(GL_POLYGON);
@@ -1530,14 +2331,14 @@ void Block::render()
 	{
 		if (bnum > 3)
 		{
-			// render ®ÈÀ]
+			// render æ—…é¤¨
 			glTranslatef(0.0, 1.6, 0.25 * BLOCK_SIZE);
 			glScalef(2.0, 2.0, 2.0);
 			buildings[0].Draw();
 		}
 		else
 		{
-			// render ´¶³q©Ğ¤l
+			// render æ™®é€šæˆ¿å­
 			glTranslatef(-(BLOCK_SIZE * 0.35) * 2, 0.8, 0.35 * BLOCK_SIZE);
 			for (int i = 0; i < bnum; i++)
 			{
@@ -1557,7 +2358,7 @@ void Block::BlockEvent()
 	{
 		if (BlockType == "land")
 		{
-			if (owner == -1)//µL¥D¦a ¥i¶R
+			if (owner == -1)//ç„¡ä¸»åœ° å¯è²·
 			{
 
 				if (MouseControl == 1)
@@ -1570,7 +2371,7 @@ void Block::BlockEvent()
 					}
 				}
 			}
-			else if (owner != monopoly.now_player) //¥L¦a¡A¥I¹L¸ô¶O
+			else if (owner != monopoly.now_player) //ä»–åœ°ï¼Œä»˜éè·¯è²»
 			{
 
 				long payment = setup * (bnum + 1) / 3;
@@ -1615,7 +2416,7 @@ void Block::BlockEvent()
 		{
 			if (setup == CORNER_START)
 			{
-				monopoly.getNowPlayer()->money += 2000;
+				//monopoly.getNowPlayer()->money += 2000;
 			}
 			else if (setup == CORNER_GOPRISON)
 			{
@@ -1639,7 +2440,7 @@ void Block::BlockEvent()
 		else if (BlockType == "card")
 		{
 			Player* target = monopoly.getNowPlayer();
-			if (CARD_Discriptor[setup][owner][1] == "§¤¨c")
+			if (CARD_Discriptor[setup][owner][1] == "åç‰¢")
 			{
 				//target : monopoly.blocks[12];
 				target->blockId = &monopoly.blocks[12];
@@ -1679,7 +2480,7 @@ void Block::Interface()
 	glPushMatrix();
 
 	glColor3fv(color);
-	selectFont(24, DEFAULT_CHARSET, "µØ¤å¥é§º");
+	selectFont(24, DEFAULT_CHARSET, "è¯æ–‡ä»¿å®‹");
 	//glRasterPos3f(camPosx * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 
 	if (BlockType == "land")
@@ -1716,78 +2517,78 @@ void Block::LandInterface()
 	stringstream ss;
 	if (owner == -1)
 	{
-		//µL¥D¦a
+		//ç„¡ä¸»åœ°
 		ss << this->setup;
-		str = "³o¦a¤è¬İ°_¨Ó¤£¿ù¡A»ù®æ¬°";
+		str = "é€™åœ°æ–¹çœ‹èµ·ä¾†ä¸éŒ¯ï¼Œåƒ¹æ ¼ç‚º";
 		str.append(ss.str());
-		str.append("¡A­n¶R¶Ü ? ");
+		str.append("ï¼Œè¦è²·å— ? ");
 		glColor3f(1.0, 1.0, 1.0);
 
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
-		str = "¬O(¥ªÁä)            §_(¥kÁä)";
+		str = "æ˜¯(å·¦éµ)            å¦(å³éµ)";
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 	}
 	else if (owner != monopoly.now_player)
 	{
 		ss << owner + 1;
-		str = "¦¹¦aÄİ©óª±®a";
+		str = "æ­¤åœ°å±¬æ–¼ç©å®¶";
 		str.append(ss.str());
-		str.append("¡A");
+		str.append("ï¼Œ");
 		if (monopoly.players[owner].blockId->bid == 12 && monopoly.players[owner].RoundStall > 0)
 		{
-			str.append("¦]¸Óª±®a¥¿¦b§¤¨c¡A¬G¦¹¦¸¹L¸ô¶O§K¶O!");
+			str.append("å› è©²ç©å®¶æ­£åœ¨åç‰¢ï¼Œæ•…æ­¤æ¬¡éè·¯è²»å…è²»!");
 		}
 		else
 		{
 			int payment = setup * (bnum + 1) / 3;
 			if (bnum > 3)
-				str.append("¦³1´É®ÈÀ]");
+				str.append("æœ‰1æ£Ÿæ—…é¤¨");
 			else
 			{
 				ss.str("");
 				ss << bnum;
-				str.append("¦³");
+				str.append("æœ‰");
 				str.append(ss.str());
-				str.append("´É©Ğ¦a²£");
+				str.append("æ£Ÿæˆ¿åœ°ç”¢");
 			}
-			str.append("¡A»İ¥I");
+			str.append("ï¼Œéœ€ä»˜");
 			ss.str("");
 			ss << payment;
 			str.append(ss.str());
-			str.append("·í§@¹L¸ô¶O");
+			str.append("ç•¶ä½œéè·¯è²»");
 		}
 
 		glRasterPos3f(camPosx + 0.2 - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
-		str = "½T»{(ÂIÀ»¥ô·N³B)";
+		str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 		glRasterPos3f(camPosx + 0.2 - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 	}
 	else if (bnum < 3)
 	{
 		int payment = setup / 4 * (bnum + 1) * 4 / 3;
-		str = "¥i¥H¥[»\©Ğ¤l¡A¶O¥Î¬°";
+		str = "å¯ä»¥åŠ è“‹æˆ¿å­ï¼Œè²»ç”¨ç‚º";
 		ss << payment;
 		str.append(ss.str());
-		str.append("­n«Ø³y¶Ü?");
+		str.append("è¦å»ºé€ å—?");
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
-		str = "¬O(¥ªÁä)            §_(¥kÁä)";
+		str = "æ˜¯(å·¦éµ)            å¦(å³éµ)";
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 	}
 	else if (bnum == 3)
 	{
 		int payment = setup / 4 * (bnum + 4) * 4 / 3;
-		str = "¥i¥H¤É¯Å¬°®ÈÀ]¡A¶O¥Î¬°";
+		str = "å¯ä»¥å‡ç´šç‚ºæ—…é¤¨ï¼Œè²»ç”¨ç‚º";
 		ss << payment;
 		str.append(ss.str());
-		str.append("­n«Ø³y¶Ü?");
+		str.append("è¦å»ºé€ å—?");
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
-		str = "¬O(¥ªÁä)            §_(¥kÁä)";
+		str = "æ˜¯(å·¦éµ)            å¦(å³éµ)";
 		glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 	}
@@ -1796,16 +2597,16 @@ void Block::LandInterface()
 void Block::GameInterface()
 {
 	float ScreenRate = ScreenWidth / ScreenHeight;
-	string str = "¤p¹CÀ¸: ";
+	string str = "å°éŠæˆ²: ";
 
 	if (setup == GAME_TYPE_POKER)
-		str.append("¼³§JµP²q¤j¤p");
+		str.append("æ’²å…‹ç‰ŒçŒœå¤§å°");
 	else if (setup == GAME_TYPE_SHOOTDART)
-		str.append("®g­¸Ãğ");
+		str.append("å°„é£›é¢");
 
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
 }
@@ -1815,17 +2616,17 @@ void Block::CornerInterface()
 	string str;
 
 	if (setup == CORNER_FREEPARK)
-		str = "¸ô¹L§K¶O°±¨®³õ¡A¥ğ®§1¦^¦X";
+		str = "è·¯éå…è²»åœè»Šå ´ï¼Œä¼‘æ¯1å›åˆ";
 	else if (setup == CORNER_GOPRISON)
-		str = "¥æ¤F¦¨¹Ï§@·~¦ı¨S¦³À£ÁY¡A¥h§¤¨c";
+		str = "äº¤äº†æˆåœ–ä½œæ¥­ä½†æ²’æœ‰å£“ç¸®ï¼Œå»åç‰¢";
 	else if (setup == CORNER_PRISON)
-		str = "¸ô¹LºÊº»¡AµL¨Æµo¥Í";
+		str = "è·¯éç›£ç„ï¼Œç„¡äº‹ç™¼ç”Ÿ";
 	else if (setup == CORNER_START)
-		str = "¦^¨ì°_ÂI¡A¼úÀy2000¤¸";
+		str = "å‰›å¥½è¸©åˆ°èµ·é»ï¼Œç„¡äº‹ç™¼ç”Ÿ";
 
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
 }
@@ -1836,16 +2637,16 @@ void Block::CardInterface()
 
 	
 	if (setup == CARD_0)
-		str = "©R¹B:";
+		str = "å‘½é‹:";
 	else if (setup == CARD_1)
-		str = "¾÷·|:";
+		str = "æ©Ÿæœƒ:";
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy * 1.01 + 0.15 * ScreenRate, camPosz - 0.55);
 	drawCNString(str.c_str());
 
 	str = CARD_Discriptor[setup][owner][0];
 	glRasterPos3f(camPosx - 0.01 * (str.length() / 2) * ScreenRate, camPosy * 1.01 + 0.1 * ScreenRate, camPosz - 0.55);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy * 1.01 + 0.05 * ScreenRate, camPosz - 0.55);
 	drawCNString(str.c_str());
 }
@@ -1923,6 +2724,11 @@ void Player::idle()
 			this->x = blockId->x;
 			this->z = blockId->z;
 			dice.count--;
+			if (this->blockId->BlockType == "corner" && this->blockId->setup == CORNER_START && dice.count !=0)
+			{
+				monopoly.pass_start = 150;
+				this->money += 2000;
+			}
 		}
 
 		if (dice.count == 0)
@@ -1955,6 +2761,7 @@ MonopolyGame::MonopolyGame()
 	this->state = READY_STATE;
 	this->HUD_Display_FLAG = TRUE;
 	this->now_player = 0;
+	int pass_start = 0;
 	//this->init();
 }
 void MonopolyGame::Render()
@@ -1988,6 +2795,8 @@ void MonopolyGame::Render()
 	// render End
 	if (state == END_STATE)
 		GameOver();
+
+	PassStartMessage();
 
 }
 void MonopolyGame::init()
@@ -2046,11 +2855,11 @@ void MonopolyGame::HUD(int PlayerID)
 	//glLoadIdentity();
 	glColor3f(1.0f, 1.0f, 1.0f);
 
-	selectFont(24, DEFAULT_CHARSET, "µØ¤å¥é§º");
+	selectFont(24, DEFAULT_CHARSET, "è¯æ–‡ä»¿å®‹");
 	for (int i = 0; i < PlayerNum; i++)
 	{
 		stringstream ss;
-		string str = "ª±®a";
+		string str = "ç©å®¶";
 		ss << i + 1;
 		str.append(ss.str());
 		str.append(":");
@@ -2059,7 +2868,7 @@ void MonopolyGame::HUD(int PlayerID)
 		drawCNString(str.c_str());
 
 		ss.str("");
-		str = "°]²£:";
+		str = "è²¡ç”¢:";
 		// player money
 		ss << players[i].money;
 		str.append(ss.str());
@@ -2067,7 +2876,7 @@ void MonopolyGame::HUD(int PlayerID)
 		drawCNString(str.c_str());
 
 		ss.str("");
-		str = "¤g¦a¼Æ:";
+		str = "åœŸåœ°æ•¸:";
 		int estimates = 0;
 		int meta_estimates = 0;
 		int lands = 0;
@@ -2087,14 +2896,14 @@ void MonopolyGame::HUD(int PlayerID)
 		drawCNString(str.c_str());
 
 		ss.str("");
-		str = "©Ğ¦a²£¼Æ:";
+		str = "æˆ¿åœ°ç”¢æ•¸:";
 		ss << estimates;
 		str.append(ss.str());
 		glRasterPos3f(camPosx - 0.5 * ScreenRate, camPosy + (0.2 - 0.2 * i - 0.09) * ScreenRate, camPosz - 0.5);
 		drawCNString(str.c_str());
 
 		ss.str("");
-		str = "®ÈÀ]¼Æ:";
+		str = "æ—…é¤¨æ•¸:";
 		ss << meta_estimates;
 		str.append(ss.str());
 		glRasterPos3f(camPosx - 0.5 * ScreenRate, camPosy + (0.2 - 0.2 * i - 0.12) * ScreenRate, camPosz - 0.5);
@@ -2103,7 +2912,7 @@ void MonopolyGame::HUD(int PlayerID)
 		if (monopoly.players[i].RoundStall > 0)
 		{
 			ss.str("");
-			str = "¥ğ®§¦^¦X³Ñ¾l:";
+			str = "ä¼‘æ¯å›åˆå‰©é¤˜:";
 			ss << monopoly.players[i].RoundStall;
 			str.append(ss.str());
 			glRasterPos3f(camPosx - 0.5 * ScreenRate, camPosy + (0.2 - 0.2 * i - 0.15) * ScreenRate, camPosz - 0.5);
@@ -2135,6 +2944,9 @@ void MonopolyGame::toREADY_STATE()
 }
 void MonopolyGame::toROLLING_STATE()
 {
+	camPosx = monopoly.players[monopoly.now_player].x + monopoly.players[monopoly.now_player].offset_x;
+	camPosy = 6.0;
+	camPosz = monopoly.players[monopoly.now_player].z + monopoly.players[monopoly.now_player].offset_z + 8.0;
 	HUD_Display_FLAG = FALSE;
 	dice.can_roll = TRUE;
 	dice.dice_rotate = TRUE;
@@ -2142,6 +2954,9 @@ void MonopolyGame::toROLLING_STATE()
 }
 void MonopolyGame::toMOVING_STATE()
 {
+	camPosx = monopoly.players[monopoly.now_player].x + monopoly.players[monopoly.now_player].offset_x;
+	camPosy = 6.0;
+	camPosz = monopoly.players[monopoly.now_player].z + monopoly.players[monopoly.now_player].offset_z + 8.0;
 	HUD_Display_FLAG = FALSE;
 	dice.count = dice.num;
 	getNowPlayer()->MOVING_FLAG = TRUE;
@@ -2149,7 +2964,9 @@ void MonopolyGame::toMOVING_STATE()
 }
 void MonopolyGame::toEVENT_STATE()
 {
-	//camPosx = 50.0; camPosy = 30.0; camPosz = 0.0;
+	camPosx = default_camPosx;
+	camPosy = default_camPosy;
+	camPosz = default_camPosz;
 	players[now_player].blockId->MouseControl = -1;
 	if (getNowPlayer()->blockId->BlockType == "game")
 		HUD_Display_FLAG = FALSE;
@@ -2178,12 +2995,12 @@ void MonopolyGame::GameOver()
 	// Wid 0.118, Hei 0.06
 	float ScreenRate = ScreenWidth / ScreenHeight;
 
-	selectFont(32, DEFAULT_CHARSET, "µØ¤å¥é§º");
+	selectFont(32, DEFAULT_CHARSET, "è¯æ–‡ä»¿å®‹");
 	glColor4f(1.0, 1.0, 1.0, 0.5);
-	string str = "¹CÀ¸µ²§ô";
+	string str = "éŠæˆ²çµæŸ";
 	glRasterPos3f(camPosx + 0.08 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx + 0.08 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
 
@@ -2197,11 +3014,36 @@ void MonopolyGame::toEND_STATE()
 }
 void MonopolyGame::toGAME_STATE()
 {
-	shootDart.shoot_reset();
+	
+
 	if (getNowPlayer()->blockId->setup == GAME_TYPE_SHOOTDART)
+	{
+		shootDart.shoot_reset();
 		state = GAME_STATE_SHOOTDART;
+	}
+	else if (getNowPlayer()->blockId->setup == GAME_TYPE_POKER)
+	{
+		glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHT0);
+		poker.reset_pokergame();
+		poker.real_money = getNowPlayer()->money;
+		state = GAME_STATE_POKER;
+	}
 	else
 		toREADY_STATE();
+}
+void MonopolyGame::PassStartMessage()
+{
+	if (pass_start > 0)
+	{
+		float ScreenRate = ScreenWidth / ScreenHeight;
+		string str = "è·¯éèµ·é»ï¼Œçå‹µ2000å…ƒ!";
+		
+		glColor3f(1.0, 1.0, 1.0);
+		glRasterPos3f(camPosx + 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+		pass_start--;
+	}
 }
 
 void GameShootDart::GameMouseContorl(int button, int state, int x, int y)
@@ -2242,7 +3084,7 @@ void GameShootDart::GameMouseContorl(int button, int state, int x, int y)
 void GameShootDart::OutcomeInterface()
 {
 	float ScreenRate = ScreenWidth / ScreenHeight;
-	string str = "®g­¸Ãğµ²ªG: ±o¤À";
+	string str = "å°„é£›é¢çµæœ: å¾—åˆ†";
 	stringstream ss;
 
 	ss << GamePoint;
@@ -2250,14 +3092,185 @@ void GameShootDart::OutcomeInterface()
 
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.1 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "¼úÀy: ";
+	str = "çå‹µ: ";
 	ss.str("");
 	ss << GamePoint * 100;
 	str.append(ss.str());
-	str.append("¤¸");
+	str.append("å…ƒ");
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy + 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
-	str = "½T»{(ÂIÀ»¥ô·N³B)";
+	str = "ç¢ºèª(é»æ“Šä»»æ„è™•)";
 	glRasterPos3f(camPosx - 0.02 * (str.length() / 2) * ScreenRate, camPosy - 0.05 * ScreenRate, camPosz - 0.5);
 	drawCNString(str.c_str());
+}
+
+void GamePoker::GameKeyboardControl(unsigned char key, int x, int y)
+{
+	switch (key) {
+		case '4':
+			guess = GUESS_SMALL;
+			
+			break;
+		case '5':
+			guess = GUESS_SAME;
+			
+			break;
+		case '6':
+			guess = GUESS_BIG;
+			
+			break;
+		case '7':
+			gamble = Gamble_S;
+			player_money = 100;
+			
+			break;
+		case '8':
+			if (real_money >= 500) {
+				gamble = Gamble_M;
+				player_money = 500;
+			}
+			else {
+				warningMessage = 100;
+			}
+			break;
+		case '9':
+			if (real_money >= 1000) {
+				gamble = Gamble_L;
+				player_money = 1000;
+			}
+			else {
+				warningMessage = 100;
+			}
+			break;
+		case ' ':
+			if (guess_mode == GUESS_BEFORE) {
+				guess_mode = GUESS_AFTER;
+			}
+			break;
+		case 13:
+			
+			if (final_state == FINAL_NOTYET) {
+				final_state = FINAL_GET;
+			}
+			else if (final_state == FINAL_SHOW) {
+				//reset_pokergame();
+				//final_state = FINAL_NOTYET;
+				monopoly.getNowPlayer()->money = real_money;
+				glEnable(GL_LIGHT0);
+				glEnable(GL_LIGHTING);
+				monopoly.toREADY_STATE();
+			}
+			
+			break;
+		default:
+			break;
+	}
+
+}
+void GamePoker::GameInterface()
+{
+	//0 éŠæˆ²è¦å‰‡ - é›™å€æˆ–å–®å€
+	//1 è³­çš„éŒ¢æ•¸
+	//2 è³­å¤§orä¸­orå°
+	
+	// Wid 0.118, Hei 0.06
+	float ScreenRate = ScreenWidth / ScreenHeight;
+	glPushMatrix();
+	//glLoadIdentity();
+	glColor3fv(game_material);
+
+	selectFont(24, DEFAULT_CHARSET, "è¯æ–‡ä»¿å®‹");
+	
+	stringstream ss;
+	string str;
+
+	if (final_state != FINAL_SHOW)
+	{
+		str = "éŠæˆ²è¦å‰‡:";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate-0.1, camPosy + (0.2) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+
+		str = "è³­åšæ–¹æ¡ˆ:æ•¸å­—éµ4ã€5ã€6é¸æ“‡æ¯”å¤§ã€ç›¸åŒã€æ¯”å°";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.03) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+
+		str = "è³­æ³¨è¨­å®š:æ•¸å­—éµ7é¸æ“‡ç”¨100å…ƒä¾†ç©(å…è²»)";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.09) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+
+		str = "                 æ•¸å­—éµ8é¸æ“‡ç”¨500å…ƒä¾†ç©";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.12) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+
+		str = "                 æ•¸å­—éµ9é¸æ“‡ç”¨1000å…ƒä¾†ç©";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.15) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+
+		str = "ä½¿ç”¨[ç©ºç™½éµ]å¯ä»¥å·çœ‹è‡ªå·±çš„å¡ç‰Œ";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.21) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+
+		str = "ä½†è³ ç‡æœƒå¾ 1:2 é™å› 1:1";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.24) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+
+		str = "æŒ‰Enterä»¥é–‹å§‹è³­å±€";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.27) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+	}
+	else
+	{
+		str = "çµæœ:";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.06) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+		
+		str = "";
+		if (result != LOSE)
+			str = "çŒœæ¸¬æˆåŠŸ! ç²å¾—çé‡‘";
+		else
+			str = "çŒœæ¸¬å¤±æ•—! å¤±å»é‡‘éŒ¢";
+		ss << player_money;
+		str.append(ss.str());
+		str.append("å…ƒ");
+		
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.09) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+
+		str = "ç¢ºèª(Enter)";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.12) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+	}
+
+	str = "è³­åšæ–¹æ¡ˆ: ";
+	if (guess == GUESS_BIG)
+		str.append("çŒœå¤§");
+	else if (guess == GUESS_SAME)
+		str.append("çŒœç›¸åŒ");
+	else if (guess == GUESS_SMALL)
+		str.append("çŒœå°");
+	glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.36) * ScreenRate, camPosz - 0.5);
+	drawCNString(str.c_str());
+
+	str = "è³­æ³¨è¨­å®š: ";
+	if (gamble == Gamble_S)
+		str.append("ä½¿ç”¨å…è²»çš„100å…ƒ");
+	else if (gamble == Gamble_M)
+		str.append("ä½¿ç”¨500å…ƒ");
+	else if (gamble == Gamble_L)
+		str.append("ä½¿ç”¨1000å…ƒ");
+	glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.39) * ScreenRate, camPosz - 0.5);
+	drawCNString(str.c_str());
+
+
+	if (warningMessage > 0)
+	{
+		glColor3f(0.8, 0.1, 0.1);
+		str = "è­¦å‘Š: é‡‘éŒ¢ä¸è¶³!";
+		glRasterPos3f(camPosx - 0.5 * ScreenRate - 0.02, camPosy + (0.2 - 0.42) * ScreenRate, camPosz - 0.5);
+		drawCNString(str.c_str());
+		warningMessage--;
+	}
+	
+
+	glPopMatrix();
 }
